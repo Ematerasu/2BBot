@@ -20,20 +20,20 @@ class Referee:
         new_elo = old_elo + self.K_FACTOR * (result - expected_score)
         return int(round(new_elo))
     
-    def update_leaderboard(self, winnerTeamID: int, loserTeamID: int):
-        if winnerTeamID not in self.current_teams:
+    def update_leaderboard(self, winnerTeamId: int, loserTeamId: int):
+        if winnerTeamId not in self.current_teams:
             raise ValueError("Winner team is not registered")
-        if loserTeamID not in self.current_teams:
+        if loserTeamId not in self.current_teams:
             raise ValueError("Loser team is not registered")
         
         with open('ranking.json', 'r') as f:
             ranking = json.load(f)
 
-        winnerTeam = self.current_teams[winnerTeamID]
-        winnersTeamElo = winnerTeam.get_teams_elo()
+        winnerTeam = self.current_teams[winnerTeamId]
+        winnerTeamElo = winnerTeam.get_teams_elo(ranking)
 
-        loserTeam = self.current_teams[loserTeamID]
-        loserTeamElo = loserTeam.get_teams_elo()
+        loserTeam = self.current_teams[loserTeamId]
+        loserTeamElo = loserTeam.get_teams_elo(ranking)
 
         for player in winnerTeam.get_players():
             if player in ranking:
@@ -48,20 +48,20 @@ class Referee:
 
         for player in loserTeam.get_players():
             if player in ranking:
-                ranking[player]["elo"] = self.calculate_elo(ranking[player]["elo"], winnersTeamElo, 0)
+                ranking[player]["elo"] = self.calculate_elo(ranking[player]["elo"], winnerTeamElo, 0)
                 ranking[player]["losses"] += 1
             else:
                 ranking[player] = {
-                    "elo": self.calculate_elo(500, winnersTeamElo, 0),
+                    "elo": self.calculate_elo(500, winnerTeamElo, 0),
                     "wins": 0,
                     "losses": 1
                 }
 
         with open('ranking.json', 'w') as f:
-            json.dump(ranking, f)
+            json.dump(ranking, f, sort_keys=True, indent=4)
         
-        del self.current_teams[winnerTeamID]
-        del self.current_teams[loserTeamID]
+        del self.current_teams[winnerTeamId]
+        del self.current_teams[loserTeamId]
         
     def clear_register(self):
         self.current_teams = dict()

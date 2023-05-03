@@ -1,13 +1,5 @@
 import random
-import numpy as np
 from Team import Team
-
-def print_teams(teams):
-    for i, team in enumerate(teams):
-        print(f'Team {i+1}:')
-        for position, player in team.items():
-            print(f'\t{position} - {player}')
-        print()
 
 def generate_teams(players_list, teams_needed):
 
@@ -16,7 +8,7 @@ def generate_teams(players_list, teams_needed):
 
     random.shuffle(POSITIONS)
 
-    for i, position in enumerate(POSITIONS):
+    for position in POSITIONS:
 
         sorted_players_list = dict(sorted(players_list.items(), key=lambda item: len(item[1])))
         candidates = [player for player, roles in sorted_players_list.items() if position in roles]
