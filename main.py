@@ -13,6 +13,10 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='%', intents=intents)
 load_dotenv()
 
+if not os.path.isfile('./ranking.json'):
+    with open('ranking.json', 'w') as f:
+        json.dump(dict(), f, sort_keys=True, indent=4)
+
 MAIN_MESSAGE_ID = ''
 
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
