@@ -78,7 +78,7 @@ async def customs(ctx):
 @bot.command(name='assign')
 async def assign(ctx, teams_needed=2):
     ref.clear_register()
-    message = await ctx.fetch_message(int('1103335049010610296'))
+    message = await ctx.fetch_message(int(MAIN_MESSAGE_ID))
     reactions = message.reactions
     players = dict()
     for reaction in reactions:
