@@ -1,3 +1,5 @@
+import json
+
 class Team:
 
     POSITIONS = ['Top', 'Jungle', 'Mid', 'Bot', 'Support']
@@ -36,3 +38,16 @@ class Team:
     
     def get_players(self) -> list:
         return [self.top, self.jungle, self.mid, self.bot, self.support]
+
+    def get_teams_elo(self):
+        if not all(self.get_players()):
+            raise AttributeError("Nie ma wypelnionych wszystkich pozycji")
+        with open('ranking.json', 'r') as f:
+            ranking = json.load(f)
+        elo = 0
+        for player in self.get_players():
+            if player in ranking:
+                elo += ranking[player]["elo"]
+            else:
+                elo += 500
+        return int(round(elo/5))

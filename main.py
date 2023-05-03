@@ -78,7 +78,7 @@ async def customs(ctx):
 @bot.command(name='assign')
 async def assign(ctx, teams_needed=2):
     ref.clear_register()
-    message = await ctx.fetch_message(int('1103277254643040256'))
+    message = await ctx.fetch_message(int('1103335049010610296'))
     reactions = message.reactions
     players = dict()
     for reaction in reactions:
@@ -105,7 +105,7 @@ async def assign(ctx, teams_needed=2):
         await ctx.send(f"Za mało graczy! Jest was tylko {', '.join(list(players.keys()))}.")
         return
     if len(players.keys()) % 5 != 0 or len(players.keys()) / teams_needed != 5:
-        await ctx.send(f'Niestety muszę kogoś wyrzucić :( Jest was {players.keys()} a potrzeba {teams_needed * 5} graczy.)')
+        await ctx.send(f"Niestety muszę kogoś wyrzucić :( Jest was {', '.join(list(players.keys()))} a potrzeba {teams_needed * 5} graczy.")
         await ctx.send(f'Losowo wyrzucę kogoś z puli graczy.')
         toRemove = random.sample(list(players), len(players.keys()) - teams_needed * 5)
         await ctx.send(f'Wylosowalo: {toRemove}')
@@ -131,11 +131,11 @@ async def leaderboard(ctx):
     if len(players) == 0:
         await ctx.send('Ranking na ten moment jest pusty :(')
         return
-    players = sorted(players, key=lambda x: x[1]['wins']/(x[1]['wins']+x[1]['losses']), reverse=True)
+    players = sorted(players, key=lambda x: x[1]['elo'], reverse=True)
     message = ''
     for i, (player, value) in enumerate(players[:10]):
-        winratio = round(value['wins']/(value['wins']+value['losses']), 2)
-        message += f"{i+1}. {player} - {winratio*100}% winratio\n"
+        winratio = round(value['wins'] / (value['wins'] + value['losses']), 4) * 100
+        message += f"{i+1}. {player} - {value['elo']} ELO, {winratio}% wr\n"
     await ctx.send("Oto Top10 serwera na naszych scrimach:")
     await ctx.send(message)
 
@@ -164,16 +164,16 @@ async def myrank(ctx):
         await ctx.send(f'Przykro mi, ale nie mam ciebie w bazie danych :( Musisz zagrać jakąś grę najpierw żebym mogła cię wpisać.')
     else:
         players = list(ranking.items())
-        players = sorted(players, key=lambda x: x[1]['wins']/(x[1]['wins']+x[1]['losses']), reverse=True)
+        players = sorted(players, key=lambda x: x[1]['elo'], reverse=True)
         for i, (p, value) in enumerate(players):
             if player == p:
-                winratio = round(value['wins']/(value['wins']+value['losses']), 4)
-                await ctx.send(f'Zajmujesz {i+1} miejsce w rankingu z winratio równym {winratio*100}%.')
+                winratio = round(value['wins'] / (value['wins'] + value['losses']), 4) * 100
+                await ctx.send(f"Zajmujesz {i+1} miejsce w rankingu z ELO równym {value['elo']} i masz {winratio}% wr.")
                 break
     return
 
-@bot.command(name='help')
-async def help(ctx):
+@bot.command(name='commands')
+async def commands(ctx):
     message = 'Hej! Jestem 2B, bot do zarządzania 5v5 customami na serwerze Romowie Furazka :)\n'
     message += 'By mnie wywołać użyj jednej z kilku komend:\n'
     message += '.\t `%customs` - rozpoczyna proces tworzenia customów, losowania drużyn itd.\n'
