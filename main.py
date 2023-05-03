@@ -1,20 +1,23 @@
 import os
 import json
+import random
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
 from TeamRandomizer import generate_teams
+from referee import Referee
 
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='%', intents=intents)
 load_dotenv()
 
-LIGA_LEGENDS_CHANNEL_ID = '1001856140486901850'
 MAIN_MESSAGE_ID = ''
 
 TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+
+TRUSTED_USERS = ['Ematerasu', 'Furazek', 'Lufik', 'kuszy00', 'Kasta', 'Arjey', 'qtJanina', 'Taddy Mason']
 
 EMOJIS = {
     'Top': '<:lolTop:1102992585557016667>',
@@ -54,10 +57,11 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
-
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
     await bot.process_commands(message)
+
+@bot.command(name='hej')
+async def hej(ctx):
+    await ctx.send(f'Siema, co tam? :)')
 
 @bot.command(name='customs')
 async def customs(ctx):
@@ -73,7 +77,8 @@ async def customs(ctx):
 
 @bot.command(name='assign')
 async def assign(ctx, teams_needed=2):
-    message = await ctx.fetch_message(int(MAIN_MESSAGE_ID))
+    ref.clear_register()
+    message = await ctx.fetch_message(int('1103277254643040256'))
     reactions = message.reactions
     players = dict()
     for reaction in reactions:
@@ -82,7 +87,7 @@ async def assign(ctx, teams_needed=2):
                 try:
                     role = map_emoji_to_role(reaction.emoji.name)
                 except ValueError:
-                    await ctx.send('Co za zjeb sie bawi emotkami i dodaje nowe? Jeszcze raz odpalcie %customs')
+                    await ctx.send('Nie bawcie się emotkami... Usuncie te których nie dodałam i jeszcze raz odpalcie %customs')
                     return
                 if user.name in players:
                     if role == 'Fill':
@@ -96,21 +101,89 @@ async def assign(ctx, teams_needed=2):
                         players[user.name] = {role}
     print(players)
     print(len(players))
-    if len(players.keys()) % 5 != 0 or len(players.keys()) / teams_needed != 5:
-        await ctx.send(f'Nie da sie was podzielic na {teams_needed} teamy 5-cio osobowe')
+    if len(players.keys()) < teams_needed * 5:
+        await ctx.send(f"Za mało graczy! Jest was tylko {', '.join(list(players.keys()))}.")
         return
+    if len(players.keys()) % 5 != 0 or len(players.keys()) / teams_needed != 5:
+        await ctx.send(f'Niestety muszę kogoś wyrzucić :( Jest was {players.keys()} a potrzeba {teams_needed * 5} graczy.)')
+        await ctx.send(f'Losowo wyrzucę kogoś z puli graczy.')
+        toRemove = random.sample(list(players), len(players.keys()) - teams_needed * 5)
+        await ctx.send(f'Wylosowalo: {toRemove}')
+        for key in toRemove:
+            del players[key]
+
     teams = generate_teams(players, teams_needed)
     if isinstance(teams, list):
         await ctx.send('Oto wylosowane teamy:')
-        for i, team in enumerate(teams):
-            message = ''
-            await ctx.send(f'Team {i+1}:')
-            for position, player in team.items():
-                message += f'.\t{position} - {player}\n'
-            await ctx.send(message)
+        for team in teams:
+            ref.register_teams(team)
+            await ctx.send(team.print_teams())
     elif isinstance(teams, str):
         await ctx.send(teams)
     elif teams is None:
         await ctx.send('cos nie pyklo')
+
+@bot.command(name='leaderboard')
+async def leaderboard(ctx):
+    with open('ranking.json', 'r') as f:
+        ranking = json.load(f)
+    players = list(ranking.items())
+    if len(players) == 0:
+        await ctx.send('Ranking na ten moment jest pusty :(')
+        return
+    players = sorted(players, key=lambda x: x[1]['wins']/(x[1]['wins']+x[1]['losses']), reverse=True)
+    message = ''
+    for i, (player, value) in enumerate(players[:10]):
+        winratio = round(value['wins']/(value['wins']+value['losses']), 2)
+        message += f"{i+1}. {player} - {winratio*100}% winratio\n"
+    await ctx.send("Oto Top10 serwera na naszych scrimach:")
+    await ctx.send(message)
+
+@bot.command(name='win')
+async def win(ctx, arg1=None, arg2=None):
+    if arg1 is None or arg2 is None:
+        await ctx.send("Podaj numer druzyny która wygrała i przegrała!")
+        return
+    if ctx.message.author.name not in TRUSTED_USERS:
+        await ctx.send(f"Komende moze wykonac tylko osoba z listy: {', '.join(TRUSTED_USERS)}")
+        return
+    
+    try:
+        ref.update_leaderboard(int(arg1), int(arg2))
+    except ValueError:
+        await ctx.send("Któryś z teamów nie jest zarejestrowany w bazie. Sprawdz czy ID są poprawne.")
+        return
+    await ctx.send(f"Zapisane! Brawa dla Teamu {arg1}!")
+
+@bot.command(name='myrank')
+async def myrank(ctx):
+    with open('ranking.json', 'r') as f:
+        ranking = json.load(f)
+    player = ctx.message.author.name
+    if player not in ranking:
+        await ctx.send(f'Przykro mi, ale nie mam ciebie w bazie danych :( Musisz zagrać jakąś grę najpierw żebym mogła cię wpisać.')
+    else:
+        players = list(ranking.items())
+        players = sorted(players, key=lambda x: x[1]['wins']/(x[1]['wins']+x[1]['losses']), reverse=True)
+        for i, (p, value) in enumerate(players):
+            if player == p:
+                winratio = round(value['wins']/(value['wins']+value['losses']), 4)
+                await ctx.send(f'Zajmujesz {i+1} miejsce w rankingu z winratio równym {winratio*100}%.')
+                break
+    return
+
+@bot.command(name='help')
+async def help(ctx):
+    message = 'Hej! Jestem 2B, bot do zarządzania 5v5 customami na serwerze Romowie Furazka :)\n'
+    message += 'By mnie wywołać użyj jednej z kilku komend:\n'
+    message += '.\t `%customs` - rozpoczyna proces tworzenia customów, losowania drużyn itd.\n'
+    message += '.\t `%assign <liczba_druzyn=2>` - wymaga najpierw uruchomienia `customs`. Zbierze reakcje z wiadomosci wczesniej i wylosuje druzyny\n'
+    message += '.\t `%win <id_druzyny_wygranej> <id_druzyny_przegranej>` - Dla drużyn wylosowanych wcześniej poprawia statystyki w bazie.\n'
+    message += '.\t `%leaderboard` - Aktualny ranking serwera\n'
+    message += '.\t `%myrank` - twoja pozycja w rankingu wicu\n'
+    message += 'Jakby coś nie działało to piszcie do Ematerasu#0001'
+    await ctx.send(message)
+
+ref = Referee()
 
 bot.run(TOKEN)
