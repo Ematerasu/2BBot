@@ -37,7 +37,7 @@ class Referee:
 
         for player in winnerTeam.get_players():
             if player in ranking:
-                ranking[player]["elo"] += self.calculate_elo(ranking[player]["elo"], loserTeamElo, 1)
+                ranking[player]["elo"] = self.calculate_elo(ranking[player]["elo"], loserTeamElo, 1)
                 ranking[player]["wins"] += 1
             else:
                 ranking[player] = {
@@ -48,7 +48,7 @@ class Referee:
 
         for player in loserTeam.get_players():
             if player in ranking:
-                ranking[player]["elo"] += self.calculate_elo(ranking[player]["elo"], winnersTeamElo, 0)
+                ranking[player]["elo"] = self.calculate_elo(ranking[player]["elo"], winnersTeamElo, 0)
                 ranking[player]["losses"] += 1
             else:
                 ranking[player] = {
