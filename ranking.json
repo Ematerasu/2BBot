@@ -1,0 +1,107 @@
+{
+    "Aniver": {
+        "elo": 515,
+        "losses": 0,
+        "wins": 1
+    },
+    "Arjey": {
+        "elo": 530,
+        "losses": 1,
+        "wins": 3
+    },
+    "CzestereQ": {
+        "elo": 472,
+        "losses": 2,
+        "wins": 0
+    },
+    "Eliksir": {
+        "elo": 471,
+        "losses": 2,
+        "wins": 0
+    },
+    "Ematerasu": {
+        "elo": 544,
+        "losses": 1,
+        "wins": 4
+    },
+    "Kasta": {
+        "elo": 485,
+        "losses": 1,
+        "wins": 0
+    },
+    "Kazik": {
+        "elo": 485,
+        "losses": 2,
+        "wins": 1
+    },
+    "KeyBee": {
+        "elo": 557,
+        "losses": 0,
+        "wins": 4
+    },
+    "Lufik": {
+        "elo": 499,
+        "losses": 1,
+        "wins": 1
+    },
+    "Marczel": {
+        "elo": 498,
+        "losses": 2,
+        "wins": 2
+    },
+    "Stanley": {
+        "elo": 525,
+        "losses": 2,
+        "wins": 4
+    },
+    "Wecz": {
+        "elo": 471,
+        "losses": 2,
+        "wins": 0
+    },
+    "X3Te": {
+        "elo": 470,
+        "losses": 2,
+        "wins": 0
+    },
+    "Xsarde": {
+        "elo": 492,
+        "losses": 3,
+        "wins": 2
+    },
+    "adio": {
+        "elo": 487,
+        "losses": 3,
+        "wins": 2
+    },
+    "conki": {
+        "elo": 516,
+        "losses": 1,
+        "wins": 2
+    },
+    "drYnudS2": {
+        "elo": 487,
+        "losses": 3,
+        "wins": 2
+    },
+    "grzesia": {
+        "elo": 485,
+        "losses": 1,
+        "wins": 0
+    },
+    "piotrgamerpl": {
+        "elo": 514,
+        "losses": 1,
+        "wins": 2
+    },
+    "star": {
+        "elo": 458,
+        "losses": 3,
+        "wins": 0
+    },
+    "ygus": {
+        "elo": 539,
+        "losses": 2,
+        "wins": 5
+    }
+}
