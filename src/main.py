@@ -4,33 +4,23 @@ import random
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+from ChatAI import ChatBot
 
 from TeamRandomizer import generate_teams
+from config import BOT_INFO, EMOJIS, TRUSTED_USERS
 from referee import Referee
+from RankingParser import RankingParser
 
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='%', intents=intents)
-load_dotenv()
+ref = Referee()
 
 if not os.path.isfile('./ranking.json'):
     with open('ranking.json', 'w') as f:
         json.dump(dict(), f, sort_keys=True, indent=4)
 
 MAIN_MESSAGE_ID = ''
-
-TOKEN = os.getenv('DISCORD_BOT_TOKEN')
-
-TRUSTED_USERS = ['Ematerasu', 'Furazek', 'Lufik', 'kuszy00', 'Kasta', 'Arjey', 'qtJanina', 'Taddy Mason']
-
-EMOJIS = {
-    'Top': '<:lolTop:1102992585557016667>',
-    'Jungle': '<:lolJungle:1102992533765750815>',
-    'Mid': '<:lolMid:1102992566040940646>',
-    'Bot': '<:lolBot:1102992555475476560>',
-    'Support': '<:lolSupport:1102992574924472444>',
-    'Fill': '<:lolFill:1102992545006493746>',
-}
 
 def map_emoji_to_role(emoji):
     if emoji == 'lolTop':
@@ -61,11 +51,11 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
-    await bot.process_commands(message)
+    if bot.user in message.mentions:
+        await message.channel.send(chatBot.get_answer(message.content.replace('<@1092534592289910974>', ''), message.author.name))
+        return
 
-@bot.command(name='hej')
-async def hej(ctx):
-    await ctx.send(f'Siema, co tam? :)')
+    await bot.process_commands(message)
 
 @bot.command(name='customs')
 async def customs(ctx):
@@ -148,8 +138,9 @@ async def leaderboard(ctx):
     players = sorted(players, key=lambda x: x[1]['elo'], reverse=True)
     message = ''
     for i, (player, value) in enumerate(players[:10]):
-        winratio = round(value['wins'] / (value['wins'] + value['losses']), 4) * 100
-        message += f"{i+1}. {player} - {value['elo']} ELO, {winratio}% wr\n"
+        winratio = round(value['wins'] / (value['wins'] + value['losses']) * 100, 2) 
+        n = value['wins'] + value['losses']
+        message += f"{i+1}. {player} - {value['elo']} ELO, {winratio}% wr na {n} gier\n"
     await ctx.send("Oto Top10 serwera na naszych scrimach:")
     await ctx.send(message)
 
@@ -181,8 +172,8 @@ async def myrank(ctx):
         players = sorted(players, key=lambda x: x[1]['elo'], reverse=True)
         for i, (p, value) in enumerate(players):
             if player == p:
-                winratio = round(value['wins'] / (value['wins'] + value['losses']), 4) * 100
-                await ctx.send(f"Zajmujesz {i+1} miejsce w rankingu z ELO równym {value['elo']} i masz {winratio}% wr.")
+                winratio = round(value['wins'] / (value['wins'] + value['losses'])* 100, 2) 
+                await ctx.send(f"Zajmujesz {i+1} miejsce w rankingu z ELO równym {value['elo']} i masz {winratio}% wr. Aktualna twoja dywizja to: {RankingParser.assign_division(value['elo'])}.")
                 break
     return
 
@@ -216,11 +207,13 @@ async def ranking(ctx):
     players = sorted(players, key=lambda x: x[1]['elo'], reverse=True)
     message = ''
     for i, (player, value) in enumerate(players):
-        winratio = round(value['wins'] / (value['wins'] + value['losses']), 4) * 100
-        message += f"{i+1}. {player} - {value['elo']} ELO, {winratio}% wr\n"
+        winratio = round(value['wins'] / (value['wins'] + value['losses'])* 100, 2) 
+        n = value['wins'] + value['losses']
+        message += f"{i+1}. {player} - {value['elo']} ELO, {winratio}% wr na {n} gier\n"
     await ctx.send("Oto pełny ranking serwera na naszych scrimach:")
     await ctx.send(message)
 
-ref = Referee()
-
-bot.run(TOKEN)
+if __name__ == '__main__':
+    load_dotenv()
+    chatBot = ChatBot(os.getenv('OPEN_AI_TOKEN'), BOT_INFO)
+    bot.run(os.getenv('DISCORD_BOT_TOKEN'))
