@@ -5,9 +5,9 @@
         "wins": 1
     },
     "Arjey": {
-        "elo": 530,
-        "losses": 1,
-        "wins": 3
+        "elo": 496,
+        "losses": 4,
+        "wins": 4
     },
     "CzestereQ": {
         "elo": 472,
@@ -15,14 +15,19 @@
         "wins": 0
     },
     "Eliksir": {
-        "elo": 471,
-        "losses": 2,
-        "wins": 0
+        "elo": 474,
+        "losses": 4,
+        "wins": 2
     },
     "Ematerasu": {
-        "elo": 544,
+        "elo": 569,
         "losses": 1,
-        "wins": 4
+        "wins": 6
+    },
+    "KaalineeK": {
+        "elo": 529,
+        "losses": 0,
+        "wins": 2
     },
     "Kasta": {
         "elo": 485,
@@ -35,24 +40,34 @@
         "wins": 1
     },
     "KeyBee": {
-        "elo": 557,
-        "losses": 0,
+        "elo": 539,
+        "losses": 1,
         "wins": 4
     },
     "Lufik": {
-        "elo": 499,
-        "losses": 1,
-        "wins": 1
+        "elo": 497,
+        "losses": 3,
+        "wins": 3
     },
     "Marczel": {
-        "elo": 498,
-        "losses": 2,
-        "wins": 2
+        "elo": 515,
+        "losses": 4,
+        "wins": 5
     },
-    "Stanley": {
-        "elo": 525,
+    "RamzeS": {
+        "elo": 531,
         "losses": 2,
         "wins": 4
+    },
+    "Stanley": {
+        "elo": 553,
+        "losses": 2,
+        "wins": 6
+    },
+    "T1_BratBusa69": {
+        "elo": 470,
+        "losses": 2,
+        "wins": 0
     },
     "Wecz": {
         "elo": 471,
@@ -60,9 +75,9 @@
         "wins": 0
     },
     "X3Te": {
-        "elo": 470,
-        "losses": 2,
-        "wins": 0
+        "elo": 472,
+        "losses": 3,
+        "wins": 1
     },
     "Xsarde": {
         "elo": 492,
@@ -80,8 +95,13 @@
         "wins": 2
     },
     "drYnudS2": {
-        "elo": 487,
-        "losses": 3,
+        "elo": 434,
+        "losses": 7,
+        "wins": 2
+    },
+    "furazek": {
+        "elo": 513,
+        "losses": 1,
         "wins": 2
     },
     "grzesia": {
@@ -89,19 +109,44 @@
         "losses": 1,
         "wins": 0
     },
+    "ig\u03bfr": {
+        "elo": 500,
+        "losses": 1,
+        "wins": 1
+    },
+    "kixson": {
+        "elo": 501,
+        "losses": 1,
+        "wins": 1
+    },
+    "m1siur": {
+        "elo": 474,
+        "losses": 3,
+        "wins": 1
+    },
+    "masterek": {
+        "elo": 515,
+        "losses": 1,
+        "wins": 2
+    },
     "piotrgamerpl": {
         "elo": 514,
         "losses": 1,
         "wins": 2
     },
-    "star": {
-        "elo": 458,
-        "losses": 3,
+    "qlik": {
+        "elo": 471,
+        "losses": 2,
         "wins": 0
     },
+    "star": {
+        "elo": 450,
+        "losses": 5,
+        "wins": 1
+    },
     "ygus": {
-        "elo": 539,
+        "elo": 577,
         "losses": 2,
-        "wins": 5
+        "wins": 8
     }
 }
