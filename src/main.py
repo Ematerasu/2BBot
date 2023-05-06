@@ -52,7 +52,9 @@ async def on_message(message):
     if message.author == bot.user:
         return
     if bot.user in message.mentions:
-        await message.channel.send(chatBot.get_answer(message.content.replace('<@1092534592289910974>', ''), message.author.name))
+        response = chatBot.get_answer(message.content.replace('<@1092534592289910974>', ''), message.author.name)
+        if response:
+            await message.channel.send(response)
         return
 
     await bot.process_commands(message)
