@@ -52,9 +52,12 @@ async def on_message(message):
     if message.author == bot.user:
         return
     if bot.user in message.mentions:
-        response = chatBot.get_answer(message.content.replace('<@1092534592289910974>', ''), message.author.name)
-        if response:
-            await message.channel.send(response)
+        try:
+            response = chatBot.get_answer(message.content.replace('<@1092534592289910974>', ''), message.author.name)
+            if response:
+                await message.channel.send(response)
+        except:
+            await message.channel.send('Daj mi chwile odsapnac, bo co sie sypie <a:jasperSad:1038117953738113074>')
         return
 
     await bot.process_commands(message)
