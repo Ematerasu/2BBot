@@ -51,14 +51,15 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
-    if bot.user in message.mentions:
-        try:
-            response = chatBot.get_answer(message.content.replace('<@1092534592289910974>', ''), message.author.name)
-            if response:
-                await message.channel.send(response)
-        except:
-            await message.channel.send('Daj mi chwile odsapnac, bo co sie sypie <a:jasperSad:1038117953738113074>')
-        return
+    # TODO fix constant crashing
+    # if bot.user in message.mentions:
+    #     try:
+    #         response = chatBot.get_answer(message.content.replace('<@1092534592289910974>', ''), message.author.name)
+    #         if response:
+    #             await message.channel.send(response)
+    #     except:
+    #         await message.channel.send('Daj mi chwile odsapnac, bo co sie sypie <a:jasperSad:1038117953738113074>')
+    #     return
 
     await bot.process_commands(message)
 
@@ -165,11 +166,11 @@ async def win(ctx, arg1=None, arg2=None):
         return
     await ctx.send(f"Zapisane! Brawa dla Teamu {arg1}!")
 
-@bot.command(name='myrank')
-async def myrank(ctx):
+@bot.command(name='rank')
+async def rank(ctx, arg=None):
     with open('ranking.json', 'r') as f:
         ranking = json.load(f)
-    player = ctx.message.author.name
+    player = ctx.message.author.name if arg is None else arg
     if player not in ranking:
         await ctx.send(f'Przykro mi, ale nie mam ciebie w bazie danych :( Musisz zagrać jakąś grę najpierw żebym mogła cię wpisać.')
     else:
@@ -191,7 +192,7 @@ async def commands(ctx):
     message += '.\t `%win <id_druzyny_wygranej> <id_druzyny_przegranej>` - Dla drużyn wylosowanych wcześniej poprawia statystyki w bazie.\n'
     message += '.\t `%leaderboard` - Top10 serwera\n'
     message += '.\t `%ranking` - Aktualny ranking serwera\n'
-    message += '.\t `%myrank` - twoja pozycja w rankingu wicu\n'
+    message += '.\t `%rank <nazwa_gracza>` - pozycja w rankingu wicu, jak nie zostanie podany gracz to wybierze ciebie\n'
     message += '.\t `%reset` - zresetuj przydzielenie teamów\n'
     message += 'Jakby coś nie działało to piszcie do Ematerasu#0001'
     await ctx.send(message)
