@@ -4,7 +4,7 @@
 #
 
 app = "discord-2b-bot"
-primary_region = "waw"
+primary_region = "asm"
 
 [build]
   builder = "paketobuildpacks/builder:base"
